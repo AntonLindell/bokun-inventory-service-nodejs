@@ -67,6 +67,12 @@ var requestOptions = {};
  * Helper function configure LK API connection
  */
  function makeRequest(form) {
+  var querystring = {
+    'service': configuration.service,
+    'email': configuration.client_id,
+    'encrypted': configuration.client_secret
+  }
+  Object.assign(querystring, form);
   requestOptions = {
     method: 'GET',
     url:  
@@ -74,12 +80,7 @@ var requestOptions = {};
     configuration.host + 
     ":" + configuration.port + "/" +
     configuration.path,
-    qs: {
-      'service': configuration.service,
-      'email': configuration.client_id,
-      'encrypted': configuration.client_secret,
-      ...form
-    },
+    qs: querystring,
     headers: {
       'User-Agent': 'request',
       'Content-Type': 'application/x-www-form-urlencoded'
