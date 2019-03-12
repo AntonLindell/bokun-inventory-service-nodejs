@@ -86,7 +86,6 @@ var requestOptions = {};
       'Content-Type': 'application/x-www-form-urlencoded'
     }
   }
-  console.log(requestOptions);
   // Return new promise 
   return new Promise(function(resolve, reject) {
     // Do async job
