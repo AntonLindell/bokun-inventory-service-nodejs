@@ -67,12 +67,12 @@ var requestOptions = {};
  * Helper function configure LK API connection
  */
  function makeRequest(form) {
-  var querystring = {
+  var query = {
     'service': configuration.service,
     'email': configuration.client_id,
     'encrypted': configuration.client_secret
   }
-  Object.assign(querystring, form);
+  Object.assign(query, form);
   requestOptions = {
     method: 'GET',
     url:  
@@ -80,7 +80,7 @@ var requestOptions = {};
     configuration.host + 
     ":" + configuration.port + "/" +
     configuration.path,
-    qs: querystring,
+    qs: query,
     headers: {
       'User-Agent': 'request',
       'Content-Type': 'application/x-www-form-urlencoded'
@@ -107,8 +107,8 @@ var requestOptions = {};
  function checkPluginDefinition() {
   var pluginDefinition;
   pluginDefinition = {
-    name: "Test",
-    description: "Testdesc",
+    name: "Långholmen kajak Inventory Service Plugin",
+    description: "Långholmen kajak Bokun API",
     capabilities: [
     "SUPPORTS_RESERVATIONS",
     "SUPPORTS_AVAILABILITY"
@@ -174,7 +174,7 @@ var requestOptions = {};
  function searchProducts(call) {
   console.log("In ::searchProducts");
   setPluginConfiguration(call.request.parameters);
-  makeRequest({'func': 'getProductList'})
+  makeRequest({'func': 'searchProducts'})
   .then(function(productList) {
     _.each(productList, function(product) {
       call.write(product);
@@ -194,7 +194,7 @@ var requestOptions = {};
   console.log("In ::getProductById");
   setPluginConfiguration(call.request.parameters);
   makeRequest({
-    'func': 'getProductDescription', 
+    'func': 'getProductById', 
     'externalId': call.request.externalId
   })
   .then(function(productDescription) {
@@ -360,4 +360,4 @@ if (require.main === module) {
   pluginApiServer.start();
 }
 
-exports.getServer = getServer;
+// exports.getServer = getServer;
