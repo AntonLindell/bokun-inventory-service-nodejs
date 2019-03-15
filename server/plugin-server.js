@@ -1,6 +1,5 @@
 /*
  *
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -115,7 +114,7 @@ var requestOptions = {};
     ],
     parameters: [
     {
-      name: "API_SCHEME", // "https"
+      name: "API_SCHEME", // "http"
       type: "STRING",
       required: true
     },
@@ -261,14 +260,7 @@ var requestOptions = {};
   setPluginConfiguration(call.request.parameters);
   makeRequest({
     'func': 'createReservation', 
-    'customerContact': JSON.stringify(call.request.reservationData.customerContact),
-    'notes': call.request.reservationData.notes,
-    'date': JSON.stringify(call.request.reservationData.date),
-    'time': JSON.stringify(call.request.reservationData.time),
-    'reservations': JSON.stringify(call.request.reservationData.reservations),
-    'platformId': call.request.reservationData.platformId,
-    'bookingSource': JSON.stringify(call.request.reservationData.bookingSource),
-    'externalSaleId': call.request.reservationData.externalSaleId
+    'reservationData': JSON.stringify(call.request.reservationData)
   })
   .then(function(reservation) {
     callback(null, reservation);
@@ -287,14 +279,7 @@ var requestOptions = {};
   makeRequest({
     'func': 'confirmBooking', 
     'reservationConfirmationCode': call.request.reservationConfirmationCode,
-    'customerContact': JSON.stringify(call.request.reservationData.customerContact),
-    'notes': call.request.reservationData.notes,
-    'date': JSON.stringify(call.request.reservationData.date),
-    'time': JSON.stringify(call.request.reservationData.time),
-    'reservations': JSON.stringify(call.request.reservationData.reservations),
-    'platformId': call.request.reservationData.platformId,
-    'bookingSource': JSON.stringify(call.request.reservationData.bookingSource),
-    'externalSaleId': call.request.reservationData.externalSaleId,
+    'reservationData': JSON.stringify(call.request.reservationData),
     'confirmationData': JSON.stringify(call.request.confirmationData)
   })
   .then(function(confirmation) {
