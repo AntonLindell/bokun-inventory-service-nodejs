@@ -2,6 +2,7 @@
   "name": "LK-inventory-service-plugin",
   "version": "0.1.0",
   "dependencies": {
+    "@echo-health/grpc-interceptors": "github:echo-health/node-grpc-interceptors#master",
     "@grpc/proto-loader": "^0.1.0",
     "async": "^1.5.2",
     "body-parser": "^1.18.3",

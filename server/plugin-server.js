@@ -14,6 +14,7 @@
  *
  */
  const request = require('request');
+ const interceptors = require('@echo-health/grpc-interceptors');
  const querystring = require('querystring');
  var PROTO_PATH = __dirname + '/../protos/proto_plugin/plugin_api.proto';
  var fs = require('fs');
@@ -22,6 +23,8 @@
  var _ = require('lodash');
  var grpc = require('grpc');
  var protoLoader = require('@grpc/proto-loader');
+ const configFile = require('./config.js');
+ const sharedSecret = configFile.sharedSecret;
  var packageDefinition = protoLoader.loadSync(
   PROTO_PATH,
   {keepCase: true,
@@ -106,8 +109,8 @@ var requestOptions = {};
  function checkPluginDefinition() {
   var pluginDefinition;
   pluginDefinition = {
-    name: "Långholmen kajak Inventory Service Plugin",
-    description: "Långholmen kajak Bokun API",
+    name: configFile.pluginName,
+    description: configFile.pluginDescription,
     capabilities: [
     "SUPPORTS_RESERVATIONS",
     "SUPPORTS_AVAILABILITY"
@@ -323,7 +326,7 @@ var requestOptions = {};
  * @return {Server} The new server object
  */
  function getServer() {
-  var server = new grpc.Server();
+  var server = interceptors.serverProxy(new grpc.Server());
   server.addService(pluginapi.PluginApi.service, {
     getDefinition: getDefinition,
     searchProducts: searchProducts,
@@ -338,11 +341,29 @@ var requestOptions = {};
   return server;
 }
 
+
+/**
+ * Middleware for authenticating with shared secret
+ */
+const getSharedSecretInterceptor = function (ctx, next) {
+  console.log('Authenticating gRPC call...');
+  callerSharedSecret = ctx.call.metadata.get('sharedsecret')[0];
+  if(callerSharedSecret !== sharedSecret) {
+    console.log("Shared secrets not matching");
+    ctx.call.emit('error', {code: grpc.status.UNAUTHENTICATED, message: "Shared secrets not matching"});
+    return false;
+  } else {
+    console.log("Authenticated");
+    next();
+  }    
+}
+
 if (require.main === module) {
-  // If this is run as a script, start a server on an unused port
+  // If this is run as a script, start a server
   var pluginApiServer = getServer();
+  pluginApiServer.use(getSharedSecretInterceptor);
   pluginApiServer.bind('0.0.0.0:8080', grpc.ServerCredentials.createInsecure());
   pluginApiServer.start();
 }
 
-// exports.getServer = getServer;
+exports.getServer = getServer;
